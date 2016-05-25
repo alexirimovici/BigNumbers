@@ -87,6 +87,66 @@ namespace BigNumbers
             }
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            BigNumber number = obj as BigNumber;
+            if ((System.Object)number == null)
+            {
+                return false;
+            }
+
+            if (sign != number.sign || length != number.length)
+            {
+                return false;
+            }
+            for (int i = 0; i < length; i++)
+            {
+                if (data[i] != number.data[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public bool Equals(BigNumber number)
+        {
+            if ((object)number == null)
+            {
+                return false;
+            }
+
+            if (sign != number.sign || length != number.length)
+            {
+                return false;
+            }
+            for (int i = 0; i < length; i++)
+            {
+                if (data[i] != number.data[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = 17;
+            hash = (hash * 23) + length.GetHashCode();
+            hash = (hash * 23) + sign.GetHashCode();
+            for (int i = 0; i < length; i++)
+            {
+                hash = (hash * 7) + data[i].GetHashCode();
+            }
+            return hash;
+        }
+
         public override string ToString()
         {
             StringBuilder number = new StringBuilder();
