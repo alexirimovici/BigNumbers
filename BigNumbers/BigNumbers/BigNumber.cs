@@ -53,16 +53,21 @@ namespace BigNumbers
         {
             data = new byte[valueWithChars.Length];
             valueWithChars = valueWithChars.Trim();
-            bool hasMinusSign = false;
+            bool hasSign = false;
 
             if (valueWithChars[0] == '-')
             {
-                hasMinusSign = true;
+                hasSign = true;
                 sign = -1;
+            } else if (valueWithChars[0] == '+')
+            {
+                hasSign = true;
+                sign = 1;
             }
-            var lowLimit = (hasMinusSign ? 1 : 0);
 
-            while (valueWithChars[lowLimit] == '0' && lowLimit < valueWithChars.Length-1)
+            var lowLimit = (hasSign ? 1 : 0);
+
+            while (valueWithChars[lowLimit] == '0' && lowLimit < valueWithChars.Length - 1)
             {
                 lowLimit++;
             }
