@@ -8,9 +8,9 @@ namespace BigNumbers
 {
     public class BigNumber : IComparable
     {
-        byte[] data;
-        int length;
-        int sign;
+        internal byte[] data;
+        internal int length;
+        internal int sign;
 
         public BigNumber()
         {
@@ -37,6 +37,7 @@ namespace BigNumbers
         {
             this.sign = sign;
             data = new byte[number.Length];
+            int baseNumber = 10;
             int lowLimit = 0;
             while (number[lowLimit] == 0)
             {
@@ -45,7 +46,7 @@ namespace BigNumbers
 
             for (int i = number.Length - 1; i >= lowLimit; i--)
             {
-                if (number[i] >= 0 || number[i] <= 9)
+                if (NumberUtils.IsSymbolInBase(number[i], baseNumber))
                 {
                     data[length++] = number[i];
                 }
@@ -103,7 +104,7 @@ namespace BigNumbers
             BigNumber result = null;
             if (firstNumber.sign == secondNumber.sign)
             {
-                result = Sum(firstNumber, secondNumber);
+                result = NumberOperation.Sum(firstNumber, secondNumber);
                 result.sign = firstNumber.sign;
             }
             else
@@ -111,12 +112,12 @@ namespace BigNumbers
                 var compareResult = (Abs(firstNumber)).CompareTo(Abs(secondNumber));
                 if (compareResult == 1)
                 {
-                    result = Diff(firstNumber, secondNumber);
+                    result = NumberOperation.Diff(firstNumber, secondNumber);
                     result.sign = firstNumber.sign;
                 }
                 else if (compareResult == -1)
                 {
-                    result = Diff(secondNumber, firstNumber);
+                    result = NumberOperation.Diff(secondNumber, firstNumber);
                     result.sign = secondNumber.sign;
                 }
                 else
@@ -137,11 +138,11 @@ namespace BigNumbers
             BigNumber result = new BigNumber();
             if (Abs(firstNumber) > Abs(secondNumber))
             {
-                result = Multiply(Abs(firstNumber), Abs(secondNumber));
+                result = NumberOperation.Multiply(Abs(firstNumber), Abs(secondNumber));
             }
             else
             {
-                result = Multiply(Abs(secondNumber), Abs(firstNumber));
+                result = NumberOperation.Multiply(Abs(secondNumber), Abs(firstNumber));
             }
 
             if (firstNumber.sign != secondNumber.sign)
@@ -154,11 +155,11 @@ namespace BigNumbers
 
         public static BigNumber operator /(BigNumber firstNumber, BigNumber secondNumber)
         {
-            if (secondNumber.IsZero())
+            if (NumberUtils.IsZero(secondNumber))
             {
                 throw new DivideByZeroException();
             }
-            var result = Divide(Abs(firstNumber), Abs(secondNumber));
+            var result = NumberOperation.Divide(Abs(firstNumber), Abs(secondNumber));
 
             if (firstNumber.sign != secondNumber.sign)
             {
@@ -166,130 +167,6 @@ namespace BigNumbers
             }
 
             return result;
-        }
-
-        private static BigNumber Sum(BigNumber firstNumber, BigNumber secondNumber)
-        {
-            BigNumber result = new BigNumber();
-            int baseNumber = 10;
-
-            result.length = (firstNumber.length > secondNumber.length) ? firstNumber.length : secondNumber.length;
-            result.data = new byte[result.length + 1];
-
-            int carry = 0;
-
-            for (int i = 0; i < result.length; i++)
-            {
-                int first = 0, second = 0;
-                if (i < firstNumber.length)
-                { first = (int)firstNumber.data[i]; }
-                if (i < secondNumber.length)
-                { second = (int)secondNumber.data[i]; }
-                int sum = first + second + carry;
-                carry = sum / baseNumber;
-                result.data[i] = (byte)(sum % baseNumber);
-            }
-
-            if (carry != 0)
-            {
-                result.data[result.length++] = (byte)carry;
-            }
-            return result;
-        }
-
-        private static BigNumber Diff(BigNumber firstNumber, BigNumber secondNumber)
-        {
-            BigNumber result = new BigNumber();
-            int baseNumber = 10;
-
-            var maxLength = (firstNumber.length > secondNumber.length) ? firstNumber.length : secondNumber.length;
-            result.data = new byte[maxLength];
-
-            int carry = 0;
-
-            for (int i = 0; i < maxLength; i++)
-            {
-                int first = 0, second = 0;
-                if (i < firstNumber.length)
-                { first = (int)firstNumber.data[i]; }
-                if (i < secondNumber.length)
-                { second = (int)secondNumber.data[i]; }
-                int diff = first - second - carry;
-                carry = diff < 0 ? 1 : 0;
-                result.data[result.length++] = (byte)(diff < 0 ? (baseNumber + diff) : diff);
-            }
-            RemoveZerosFromBeginningOfNumber(result);
-            return result;
-        }
-
-        private static BigNumber Multiply(BigNumber firstNumber, BigNumber secondNumber)
-        {
-            var result = new BigNumber();
-
-            int baseNumber = 10;
-
-            var maxlength = firstNumber.length > secondNumber.length ? firstNumber.length : secondNumber.length;
-            result.length = 2 * maxlength + 1; 
-            result.data = new byte[result.length];
-
-            for (int i = 0; i <= maxlength; i++)
-            {
-                int carry = 0;
-                for (int j = 0; j <= maxlength; j++)
-                {
-                    int first = 0, second = 0;
-                    if (j < firstNumber.length)
-                    {
-                        first = (int)firstNumber.data[j];
-                    }
-                    if (i < secondNumber.length)
-                    {
-                        second = (int)secondNumber.data[i];
-                    }
-
-                    int sum = (first * second) + (int)result.data[i + j] + carry;
-                    carry = sum / baseNumber;
-                    result.data[i + j] = (byte)(sum % baseNumber);
-                }
-            }
-            RemoveZerosFromBeginningOfNumber(result);
-            return result;
-        }
-
-        private static BigNumber Divide(BigNumber firstNumber, BigNumber secondNumber)
-        {
-            int quotient = 0;
-            var dividend = new BigNumber(firstNumber);
-
-            while (dividend >= secondNumber)
-            {
-                dividend = dividend - secondNumber;
-                quotient++;
-            }
-            var result = new BigNumber(quotient.ToString());
-            return result;
-        }
-
-        private static BigNumber RemoveZerosFromBeginningOfNumber(BigNumber number)
-        {
-            while (number.length > 0 && number.data[number.length - 1] == 0)
-            {
-                number.length--;
-            }
-
-            if (number.IsZero())
-            {
-                number.length = 1;
-                number.data = new byte[1];
-                number.sign = 1;
-            }
-            
-            return number;
-        }
-
-        private bool IsZero()
-        {
-            return (length == 0 || (length == 1 && data[0] == 0));
         }
 
         private static BigNumber Negative(BigNumber numberToNegate)
@@ -361,7 +238,7 @@ namespace BigNumbers
                 return false;
             }
 
-            if(this.IsZero() && number.IsZero())
+            if (NumberUtils.IsZero(this) && NumberUtils.IsZero(number))
             {
                 return true;
             }
@@ -448,14 +325,13 @@ namespace BigNumbers
                                 return (sign == 1) ? -1 : 1;
                             }
                         }
-
                         return 0;
                     }
                 }
             }
             else
             {
-                throw new ArgumentException("Object is not a Temperature");
+                throw new ArgumentException("Object is not a BigNumber");
             }
         }
     }

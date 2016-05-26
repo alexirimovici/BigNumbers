@@ -89,6 +89,30 @@ namespace BigNumbers.Tests
         }
 
         [TestMethod]
+        public void MultiplyTwoNumbersWhenBothArePositive()
+        {
+            var firstNumber = new BigNumber("46837");
+            var secondNumber = new BigNumber("5803486");
+            var res = new BigNumber("271817873782");
+
+            var result = firstNumber * secondNumber;
+
+            Assert.AreEqual(res, result);
+        }
+
+        [TestMethod]
+        public void MultiplyTwoNumbersWhenOneIsLittleAndOneBigger()
+        {
+            var firstNumber = new BigNumber("46");
+            var secondNumber = new BigNumber("4647788674");
+            var res = new BigNumber("213798279004");
+
+            var result = firstNumber * secondNumber;
+
+            Assert.AreEqual(res, result);
+        }
+
+        [TestMethod]
         public void MultiplyTwoNumbersWhenFirstIsNegativeAndSecondIsPositive()
         {
             var firstNumber = new BigNumber("-6999");
@@ -162,6 +186,18 @@ namespace BigNumbers.Tests
         public void DivideTwoNumbersWhenResultIsSubunitaryAndNegative()
         {
             var firstNumber = new BigNumber("6999");
+            var secondNumber = new BigNumber("-39944");
+            var res = new BigNumber("0");
+
+            var result = firstNumber / secondNumber;
+
+            Assert.AreEqual(res, result);
+        }
+
+        [TestMethod]
+        public void DivideTwoNumbersWhenDividendIsZero()
+        {
+            var firstNumber = new BigNumber("0");
             var secondNumber = new BigNumber("-39944");
             var res = new BigNumber("0");
 
