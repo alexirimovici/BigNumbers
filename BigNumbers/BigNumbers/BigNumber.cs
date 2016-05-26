@@ -182,11 +182,6 @@ namespace BigNumbers
                 carry = diff < 0 ? 1 : 0;
                 result.data[result.length++] = (byte)(diff < 0 ? (baseNumber + diff) : diff);
             }
-
-            if (carry != 0)
-            {
-                result.sign = -1;
-            }
             return result;
         }
 
