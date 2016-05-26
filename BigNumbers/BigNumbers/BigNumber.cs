@@ -132,6 +132,34 @@ namespace BigNumbers
             return firstNumber + Negative(secondNumber);
         }
 
+        public static BigNumber operator *(BigNumber firstNumber, BigNumber secondNumber)
+        {
+            var result = Multiply(Abs(firstNumber), Abs(secondNumber));
+
+            if (firstNumber.sign != secondNumber.sign)
+            {
+                result.sign = -1;
+            }
+
+            return result;
+        }
+
+        public static BigNumber operator /(BigNumber firstNumber, BigNumber secondNumber)
+        {
+            if (secondNumber.IsZero())
+            {
+                throw new DivideByZeroException();
+            }
+            var result = Divide(Abs(firstNumber), Abs(secondNumber));
+
+            if (firstNumber.sign != secondNumber.sign)
+            {
+                result.sign = -1;
+            }
+
+            return result;
+        }
+
         private static BigNumber Sum(BigNumber firstNumber, BigNumber secondNumber)
         {
             BigNumber result = new BigNumber();
@@ -182,7 +210,77 @@ namespace BigNumbers
                 carry = diff < 0 ? 1 : 0;
                 result.data[result.length++] = (byte)(diff < 0 ? (baseNumber + diff) : diff);
             }
+            RemoveZerosFromBeginningOfNumber(result);
             return result;
+        }
+
+        private static BigNumber Multiply(BigNumber firstNumber, BigNumber secondNumber)
+        {
+            var result = new BigNumber();
+
+            int baseNumber = 10;
+
+            result.length = firstNumber.length + secondNumber.length + 1;
+            result.data = new byte[result.length];
+
+            for (int i = 0; i <= firstNumber.length; i++)
+            {
+                int carry = 0;
+                for (int j = 0; j <= secondNumber.length; j++)
+                {
+                    int first = 0, second = 0;
+                    if (j < firstNumber.length)
+                    {
+                        first = (int)firstNumber.data[j];
+                    }
+                    if (i < secondNumber.length)
+                    {
+                        second = (int)secondNumber.data[i];
+                    }
+
+                    int sum = (first * second) + (int)result.data[i + j] + carry;
+                    carry = sum / baseNumber;
+                    result.data[i + j] = (byte)(sum % baseNumber);
+                }
+            }
+            RemoveZerosFromBeginningOfNumber(result);
+            return result;
+        }
+
+        private static BigNumber Divide(BigNumber firstNumber, BigNumber secondNumber)
+        {
+            int quotient = 0;
+            var dividend = new BigNumber(firstNumber);
+
+            while (dividend >= secondNumber)
+            {
+                dividend = dividend - secondNumber;
+                quotient++;
+            }
+            var result = new BigNumber(quotient.ToString());
+            return result;
+        }
+
+        private static BigNumber RemoveZerosFromBeginningOfNumber(BigNumber number)
+        {
+            while (number.length > 0 && number.data[number.length - 1] == 0)
+            {
+                number.length--;
+            }
+
+            if (number.IsZero())
+            {
+                number.length = 1;
+                number.data = new byte[1];
+                number.sign = 1;
+            }
+            
+            return number;
+        }
+
+        private bool IsZero()
+        {
+            return (length == 0 || (length == 1 && data[0] == 0));
         }
 
         private static BigNumber Negative(BigNumber numberToNegate)
@@ -244,18 +342,7 @@ namespace BigNumbers
                 return false;
             }
 
-            if (sign != number.sign || length != number.length)
-            {
-                return false;
-            }
-            for (int i = 0; i < length; i++)
-            {
-                if (data[i] != number.data[i])
-                {
-                    return false;
-                }
-            }
-            return true;
+            return this.Equals(number);
         }
 
         public bool Equals(BigNumber number)
@@ -263,6 +350,11 @@ namespace BigNumbers
             if ((object)number == null)
             {
                 return false;
+            }
+
+            if(this.IsZero() && number.IsZero())
+            {
+                return true;
             }
 
             if (sign != number.sign || length != number.length)
@@ -297,6 +389,10 @@ namespace BigNumbers
             if (sign < 0)
             {
                 number.Append("-");
+            }
+            if (length == 0)
+            {
+                number.Append(0);
             }
             for (int i = length - 1; i >= 0; i--)
             {

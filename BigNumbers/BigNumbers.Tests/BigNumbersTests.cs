@@ -75,5 +75,99 @@ namespace BigNumbers.Tests
 
             Assert.AreEqual(res, result);
         }
+
+        [TestMethod]
+        public void MultiplyTwoNumbersWhenBothAreNegative()
+        {
+            var firstNumber = new BigNumber("-6999");
+            var secondNumber = new BigNumber("-39944");
+            var res = new BigNumber("279568056");
+
+            var result = firstNumber * secondNumber;
+
+            Assert.AreEqual(res, result);
+        }
+
+        [TestMethod]
+        public void MultiplyTwoNumbersWhenFirstIsNegativeAndSecondIsPositive()
+        {
+            var firstNumber = new BigNumber("-6999");
+            var secondNumber = new BigNumber("39944");
+            var res = new BigNumber("-279568056");
+
+            var result = firstNumber * secondNumber;
+
+            Assert.AreEqual(res, result);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(DivideByZeroException))]
+        public void DivideTwoNumbersWhenDivisorIsZero()
+        {
+            var firstNumber = new BigNumber("-6999");
+            var secondNumber = new BigNumber("0");
+
+            var result = firstNumber / secondNumber;
+        }
+
+        [TestMethod]
+        public void DivideTwoNumbersWhenDividendIsSmallerThanDivisor()
+        {
+            var firstNumber = new BigNumber("6999");
+            var secondNumber = new BigNumber("39944");
+            var res = new BigNumber("0");
+
+            var result = firstNumber / secondNumber;
+
+            Assert.AreEqual(res, result);
+        }
+
+        [TestMethod]
+        public void DivideTwoNumbersWhenDividendIsLargerThanDivisor()
+        {
+            var firstNumber = new BigNumber("996999");
+            var secondNumber = new BigNumber("39944");
+            var res = new BigNumber("24");
+
+            var result = firstNumber / secondNumber;
+
+            Assert.AreEqual(res, result);
+        }
+
+        [TestMethod]
+        public void DivideTwoNumbersWhenDividendIsNegativeAndDivisorIsPositive()
+        {
+            var firstNumber = new BigNumber("-996999");
+            var secondNumber = new BigNumber("39944");
+            var res = new BigNumber("-24");
+
+            var result = firstNumber / secondNumber;
+
+            Assert.AreEqual(res, result);
+        }
+
+        [TestMethod]
+        public void DivideTwoNumbersWhenDividendIsPositiveAndDivisorIsNegative()
+        {
+            var firstNumber = new BigNumber("996999");
+            var secondNumber = new BigNumber("-39944");
+            var res = new BigNumber("-24");
+
+            var result = firstNumber / secondNumber;
+
+            Assert.AreEqual(res, result);
+        }
+
+        [TestMethod]
+        public void DivideTwoNumbersWhenResultIsSubunitaryAndNegative()
+        {
+            var firstNumber = new BigNumber("6999");
+            var secondNumber = new BigNumber("-39944");
+            var res = new BigNumber("0");
+
+            var result = firstNumber / secondNumber;
+
+            Assert.AreEqual(res, result);
+        }
     }
 }
