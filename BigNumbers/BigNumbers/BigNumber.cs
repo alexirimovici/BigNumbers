@@ -134,7 +134,15 @@ namespace BigNumbers
 
         public static BigNumber operator *(BigNumber firstNumber, BigNumber secondNumber)
         {
-            var result = Multiply(Abs(firstNumber), Abs(secondNumber));
+            BigNumber result = new BigNumber();
+            if (Abs(firstNumber) > Abs(secondNumber))
+            {
+                result = Multiply(Abs(firstNumber), Abs(secondNumber));
+            }
+            else
+            {
+                result = Multiply(Abs(secondNumber), Abs(firstNumber));
+            }
 
             if (firstNumber.sign != secondNumber.sign)
             {
@@ -220,13 +228,14 @@ namespace BigNumbers
 
             int baseNumber = 10;
 
-            result.length = firstNumber.length + secondNumber.length + 1;
+            var maxlength = firstNumber.length > secondNumber.length ? firstNumber.length : secondNumber.length;
+            result.length = 2 * maxlength + 1; 
             result.data = new byte[result.length];
 
-            for (int i = 0; i <= firstNumber.length; i++)
+            for (int i = 0; i <= maxlength; i++)
             {
                 int carry = 0;
-                for (int j = 0; j <= secondNumber.length; j++)
+                for (int j = 0; j <= maxlength; j++)
                 {
                     int first = 0, second = 0;
                     if (j < firstNumber.length)
