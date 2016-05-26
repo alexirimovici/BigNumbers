@@ -53,6 +53,12 @@
     <Compile Include="BigNumbersTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BigNumbers\BigNumbers.csproj">
+      <Project>{0c16ab1b-d349-4035-9dbd-d5929d3c565b}</Project>
+      <Name>BigNumbers</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
