@@ -125,9 +125,9 @@ namespace BigNumbers.Tests
         [TestMethod]
         public void DivideTwoNumbersWhenDividendIsLargerThanDivisor()
         {
-            var firstNumber = new BigNumber("996999");
-            var secondNumber = new BigNumber("39944");
-            var res = new BigNumber("24");
+            var firstNumber = new BigNumber("12996999");
+            var secondNumber = new BigNumber("399445");
+            var res = new BigNumber("32");
 
             var result = firstNumber / secondNumber;
 
@@ -137,9 +137,9 @@ namespace BigNumbers.Tests
         [TestMethod]
         public void DivideTwoNumbersWhenDividendIsNegativeAndDivisorIsPositive()
         {
-            var firstNumber = new BigNumber("-996999");
+            var firstNumber = new BigNumber("-217899");
             var secondNumber = new BigNumber("39944");
-            var res = new BigNumber("-24");
+            var res = new BigNumber("-5");
 
             var result = firstNumber / secondNumber;
 
